@@ -1,12 +1,24 @@
-import tkinter as tk  # Importamos la biblioteca tkinter para la interfaz grafica
-from nucleo_juego import MemoriaJuego  # Importamos la clase del juego desde el archivo nucleo_juego
+import tkinter as tk
+from menu import MenuPrincipal
 
-# Creamos la ventana principal
-root = tk.Tk()  # Inicializamos la ventana de Tkinter
-root.title("Juego de Memoria")  # Asignamos un titulo a la ventana
+def main():
+    root = tk.Tk()
+    root.title("Juego de Memoria")
 
-# Creamos una instancia del juego de memoria con un tablero de 4x4
-MemoriaJuego(root, filas=4, columnas=4)  # Iniciamos el juego con una configuracion de 4x4
+    # Configurar tamaño y posición de la ventana
+    window_width = 800
+    window_height = 600
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    center_x = int(screen_width/2 - window_width/2)
+    center_y = int(screen_height/2 - window_height/2)
 
-# Ejecutamos el bucle principal de Tkinter
-root.mainloop()  # Mantenemos la ventana abierta hasta que el usuario la cierre
+    root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+    root.resizable(False, False)
+    root.configure(bg='#2C3E50')
+
+    MenuPrincipal(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()

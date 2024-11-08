@@ -1,106 +1,199 @@
-import tkinter as tk  # Importamos la biblioteca tkinter para los elementos de interfaz grafica
-import random  # Importamos la biblioteca random para mezclar los valores de las cartas
+import tkinter as tk
+import random
+import time
+import os
+from utils import GestorPuntuaciones
+from PIL import Image, ImageTk 
 
 class MemoriaJuego:
-    def __init__(self, root, filas=4, columnas=4):
-        """
-        Inicializa el juego de memoria, creando el tablero y configurando la interfaz inicial
+    def __init__(self, root, menu_callback, filas=4, columnas=4):
+        self.root = root
+        self.filas = filas
+        self.columnas = columnas
+        self.pares_encontrados = 0
+        self.intentos = 0
+        self.cartas = []
+        self.seleccionadas = []
+        self.menu_callback = menu_callback
+        self.tiempo_inicio = time.time()
+        self.gestor_puntuaciones = GestorPuntuaciones()
         
-        Parametros:
-        root: la ventana principal de Tkinter
-        filas: numero de filas en el tablero
-        columnas: numero de columnas en el tablero
-        """
-        self.root = root  # Referencia a la ventana principal
-        self.filas = filas  # Almacena el numero de filas del tablero
-        self.columnas = columnas  # Almacena el numero de columnas del tablero
-
-        # Variables para llevar la cuenta del progreso del juego
-        self.pares_encontrados = 0  # Conteo de los pares encontrados
-        self.intentos = 0  # Conteo de los intentos realizados
-        self.cartas = []  # Almacena los botones que representan las cartas
-        self.seleccionadas = []  # Lista de las cartas seleccionadas por el jugador
-
-        # Llamada para generar el tablero del juego
+        # Obtener la ruta absoluta de la carpeta de imágenes
+        ruta_img = os.path.join(os.path.dirname(__file__), "img")
+        
+        # Cargar y redimensionar imágenes de frutas a tamaño fijo (64x64)
+        self.imagenes_frutas = [
+            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "cerezas.png")).resize((64, 64))),
+            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "fresa.png")).resize((64, 64))),
+            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "manzana.png")).resize((64, 64))),
+            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "naranja.png")).resize((64, 64))),
+            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "pera.png")).resize((64, 64))),
+            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "platano.png")).resize((64, 64))),
+            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "sandia.png")).resize((64, 64))),
+            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "uvas.png")).resize((64, 64)))
+        ]
+        
+        # Crear una imagen de fondo para los botones
+        self.imagen_fondo = ImageTk.PhotoImage(Image.new("RGBA", (64, 64), (0, 0, 0, 0)))
+        
+        # Crear un frame para contener el tablero
+        self.frame_tablero = tk.Frame(self.root, bg='#E0BBE4')  # Cambiado a un color lavanda claro
+        self.frame_tablero.pack(expand=True, fill='both', padx=10, pady=10)
+        
+        # Crear un frame separado para los botones de control
+        self.frame_controles = tk.Frame(self.root, bg='#EAB8E4')  # Cambiado a un color rosado suave
+        self.frame_controles.pack(fill='x', padx=10, pady=5)
+        
+        # Etiqueta para mostrar los intentos
+        self.label_intentos = tk.Label(
+            self.frame_controles,
+            text="Intentos: 0",
+            font=("Helvetica", 12),
+            fg='white',
+            bg='#EAB8E4'
+        )
+        self.label_intentos.pack(side=tk.LEFT, padx=10)
+        
+        # Etiqueta para mostrar el tiempo
+        self.label_tiempo = tk.Label(
+            self.frame_controles,
+            text="Tiempo: 0:00",
+            font=("Helvetica", 12),
+            fg='white',
+            bg='#EAB8E4'
+        )
+        self.label_tiempo.pack(side=tk.RIGHT, padx=10)
+        
         self.generar_tablero()
+        self.actualizar_tiempo()
+
+    def actualizar_tiempo(self):
+        """Actualiza el tiempo transcurrido"""
+        tiempo_transcurrido = int(time.time() - self.tiempo_inicio)
+        minutos = tiempo_transcurrido // 60
+        segundos = tiempo_transcurrido % 60
+        self.label_tiempo.config(text=f"Tiempo: {minutos}:{segundos:02d}")
+        if self.pares_encontrados < (self.filas * self.columnas // 2):
+            self.root.after(1000, self.actualizar_tiempo)
 
     def generar_tablero(self):
-        """
-        Crea y distribuye los botones en el tablero de juego, asignando valores a cada carta
-        """
-        # Generamos una lista de pares de valores (ej. [1, 1, 2, 2, ...]) para las cartas
-        valores = list(range(1, (self.filas * self.columnas // 2) + 1)) * 2  # Genera pares de valores
-        random.shuffle(valores)  # Mezcla los valores de forma aleatoria
+        """Genera el tablero de juego con las cartas"""
+        valores = list(range(len(self.imagenes_frutas))) * 2  # Crear pares
+        random.shuffle(valores)
 
-        # Creamos el tablero de botones, asignando un valor a cada uno
-        for i in range(self.filas):  # Iteramos por cada fila
-            fila = []  # Lista temporal para almacenar los botones de la fila
-            for j in range(self.columnas):  # Iteramos por cada columna
-                valor = valores.pop()  # Extraemos un valor de la lista de valores mezclados
-                # Creamos un boton que representa una carta oculta
-                boton = tk.Button(self.root, text="?", width=8, height=4,
-                                  command=lambda i=i, j=j: self.seleccionar_carta(i, j))
-                boton.valor = valor  # Almacenamos el valor de la carta en el boton
-                boton.revelado = False  # Indicamos que la carta esta oculta
-                boton.grid(row=i, column=j)  # Posicionamos el boton en la ventana
-                fila.append(boton)  # Agregamos el boton a la lista de la fila
-            self.cartas.append(fila)  # Agregamos la fila completa al tablero de cartas
+        # Crear el tablero de botones en el frame_tablero
+        for i in range(self.filas):
+            fila = []
+            for j in range(self.columnas):
+                valor = valores.pop()
+                boton = tk.Button(
+                    self.frame_tablero,
+                    image=self.imagen_fondo,  # Usar la imagen de fondo
+                    width=64,  # Tamaño fijo en píxeles
+                    height=64,  # Tamaño fijo en píxeles
+                    command=lambda i=i, j=j: self.seleccionar_carta(i, j),
+                    bg='#FFC0CB'  # Color rosado para cartas no reveladas
+                )
+                boton.valor = valor
+                boton.imagen = self.imagenes_frutas[valor]
+                boton.revelado = False
+                boton.grid(row=i, column=j, sticky='nsew', padx=2, pady=2)
+                fila.append(boton)
+            self.cartas.append(fila)
+
+        # Configurar la cuadrícula para que los botones se expandan
+        for i in range(self.filas):
+            self.frame_tablero.grid_rowconfigure(i, weight=1)
+        for j in range(self.columnas):
+            self.frame_tablero.grid_columnconfigure(j, weight=1)
+
+        # Botón para volver al menú en el frame de controles
+        self.btn_volver = tk.Button(
+            self.frame_controles,
+            text="Volver al Menú",
+            command=self.volver_menu,
+            bg='#FF7F7F',
+            fg='white',
+            font=('Helvetica', 10),
+            bd=0,
+            cursor='hand2'
+        )
+        self.btn_volver.pack(side=tk.BOTTOM, pady=5)
 
     def seleccionar_carta(self, i, j):
-        """
-        Gestiona la seleccion de una carta, rebelandola y verificando si forma una pareja
-        
-        Parametros:
-        - i: indice de la fila de la carta seleccionada
-        - j: indice de la columna de la carta seleccionada
-        """
-        boton = self.cartas[i][j]  # Obtenemos el boton correspondiente a la carta seleccionada
+        """Maneja la selección de una carta"""
+        boton = self.cartas[i][j]
 
-        # Verificamos si la carta ya esta revelada o si hay dos cartas seleccionadas
         if boton.revelado or len(self.seleccionadas) >= 2:
-            return  # Si ya esta revelada o hay dos seleccionadas, no hacemos nada
+            return
 
-        # Revelamos la carta mostrando su valor y marcandola como revelada
-        boton.config(text=str(boton.valor))  # Mostramos el valor de la carta
-        boton.revelado = True  # Marcamos la carta como revelada
-        self.seleccionadas.append(boton)  # Agregamos la carta a la lista de seleccionadas
+        boton.config(image=boton.imagen)  # Solo muestra la imagen
+        boton.revelado = True
+        self.seleccionadas.append(boton)
 
-        # Si hay dos cartas seleccionadas, verificamos si son una pareja
         if len(self.seleccionadas) == 2:
-            self.root.after(1000, self.verificar_pareja)  # Llama a verificar la pareja tras 1 segundo
+            self.root.after(1000, self.verificar_pareja)
 
     def verificar_pareja(self):
-        """
-        Verifica si las dos cartas seleccionadas forman una pareja si es asi, las desactiva
-        si no es asi las vuelve a ocultar
-        """
-        carta1, carta2 = self.seleccionadas  # Obtenemos las dos cartas seleccionadas
+        """Verifica si las dos cartas seleccionadas forman una pareja"""
+        carta1, carta2 = self.seleccionadas
 
-        # Si los valores de las dos cartas coinciden, es una pareja
         if carta1.valor == carta2.valor:
-            carta1.config(state="disabled")  # Desactiva la primera carta de la pareja
-            carta2.config(state="disabled")  # Desactiva la segunda carta de la pareja
-            self.pares_encontrados += 1  # Incrementa el contador de pares encontrados
+            carta1.config(state="disabled", bg='#A2E8AC')  # Color verde claro para cartas emparejadas
+            carta2.config(state="disabled", bg='#A2E8AC')
+            self.pares_encontrados += 1
         else:
-            # Si no es una pareja, oculta nuevamente las cartas
-            carta1.config(text="?")  # Vuelve a ocultar el valor de la primera carta
-            carta2.config(text="?")  # Vuelve a ocultar el valor de la segunda carta
-            carta1.revelado = False  # Marca la primera carta como no revelada
-            carta2.revelado = False  # Marca la segunda carta como no revelada
+            carta1.config(image=self.imagen_fondo)
+            carta2.config(image=self.imagen_fondo)
+            carta1.revelado = False
+            carta2.revelado = False
 
-        # Resetea la lista de cartas seleccionadas y aumenta el contador de intentos
-        self.seleccionadas = []  # Vacia la lista de cartas seleccionadas
-        self.intentos += 1  # Incrementa el numero de intentos realizados
+        self.seleccionadas = []
+        self.intentos += 1
+        self.label_intentos.config(text=f"Intentos: {self.intentos}")
 
-        # Si todos los pares fueron encontrados, muestra el resultado
         if self.pares_encontrados == (self.filas * self.columnas // 2):
             self.mostrar_resultado()
 
     def mostrar_resultado(self):
-        """
-        Muestra un mensaje indicando el numero de intentos que realizo el jugador para completar el juego
-        """
-        resultado = f"Juego terminado! Intentos: {self.intentos}"  # Mensaje de resultado
-        # Muestra el mensaje en la interfaz
-        etiqueta_resultado = tk.Label(self.root, text=resultado, font=("Arial", 14))
-        etiqueta_resultado.grid(row=self.filas, column=0, columnspan=self.columnas)  # Posiciona el mensaje en el tablero
+        """Muestra la ventana de resultado al finalizar el juego"""
+        tiempo_total = int(time.time() - self.tiempo_inicio)
+        
+        # Guardar la puntuación
+        self.gestor_puntuaciones.agregar_puntuacion(self.intentos, tiempo_total)
+        
+        # Mostrar ventana de resultado
+        ventana_resultado = tk.Toplevel(self.root)
+        ventana_resultado.title("¡Juego Terminado!")
+        ventana_resultado.geometry("300x200")
+        ventana_resultado.configure(bg='#FFD1DC')  # Color suave para el fondo de resultados
+        
+        # Mensaje de resultado
+        mensaje = f"¡Felicitaciones!\n\nIntentos: {self.intentos}\nTiempo: {tiempo_total//60}:{tiempo_total%60:02d}"
+        
+        tk.Label(
+            ventana_resultado,
+            text=mensaje,
+            font=("Helvetica", 14),
+            fg='black',  # Color de texto oscuro para contraste
+            bg='#FFD1DC',
+            justify=tk.CENTER
+        ).pack(pady=20)
+        
+        # Botón para volver al menú
+        tk.Button(
+            ventana_resultado,
+            text="Volver al Menú",
+            command=lambda: [ventana_resultado.destroy(), self.volver_menu()],
+            bg='#FF7F7F',
+            fg='white',
+            font=('Helvetica', 12)
+        ).pack(pady=10)
+
+    def volver_menu(self):
+        """Vuelve al menú principal y limpia la interfaz"""
+        self.frame_tablero.destroy()
+        self.frame_controles.destroy()
+        self.cartas = []
+        if self.menu_callback:
+            self.menu_callback()
