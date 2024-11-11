@@ -1,7 +1,14 @@
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+from utils import ReproductorMusica, ReproductorSonidos
 import tkinter as tk
 from menu import MenuPrincipal
 
 def main():
+    # Inicializar la música
+    ReproductorMusica.iniciar_musica()
+    ReproductorSonidos.cargar_sonidos()
+
     root = tk.Tk()
     root.title("Juego de Memoria")
 

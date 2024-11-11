@@ -1,6 +1,6 @@
 import tkinter as tk
 from nucleo_juego import MemoriaJuego
-from utils import GestorPuntuaciones
+from utils import GestorPuntuaciones, ReproductorSonidos
 
 class MenuPrincipal:
     def __init__(self, root):
@@ -8,26 +8,26 @@ class MenuPrincipal:
         self.gestor_puntuaciones = GestorPuntuaciones()
         self.ventana_puntuaciones = None
 
-        # Main frame with a light cream background
+        # Frame principal del menú
         self.frame_menu = tk.Frame(root, bg='#FFEBE8')
         self.frame_menu.pack(expand=True, fill='both')
 
-        # Title with a fun and friendly font
+        # Título del menú
         self.titulo = tk.Label(
             self.frame_menu,
             text="✨ JUEGO DE MEMORIA ✨",
             font=("Comic Sans MS", 32, "bold"),
-            fg='#FF6F61',  # Coral color
+            fg='#FF6F61',
             bg='#FFEBE8',
             pady=40
         )
         self.titulo.pack()
 
-        # Buttons frame
+        # Frame para los botones
         self.frame_botones = tk.Frame(self.frame_menu, bg='#FFEBE8')
         self.frame_botones.pack(expand=True)
 
-        # Common style for buttons
+        # Estilo común para botones
         boton_estilo = {
             'font': ('Comic Sans MS', 16, 'bold'),
             'width': 20,
@@ -37,7 +37,7 @@ class MenuPrincipal:
             'cursor': 'hand2'
         }
 
-        # Buttons with fun colors and hover effects
+        # Botón JUGAR
         self.btn_jugar = tk.Button(
             self.frame_botones,
             text="JUGAR",
@@ -50,6 +50,7 @@ class MenuPrincipal:
         )
         self.btn_jugar.pack(pady=15)
 
+        # Botón PUNTUACIONES
         self.btn_puntuaciones = tk.Button(
             self.frame_botones,
             text="PUNTUACIONES",
@@ -62,6 +63,7 @@ class MenuPrincipal:
         )
         self.btn_puntuaciones.pack(pady=15)
 
+        # Botón SALIR
         self.btn_salir = tk.Button(
             self.frame_botones,
             text="SALIR",
@@ -74,13 +76,19 @@ class MenuPrincipal:
         )
         self.btn_salir.pack(pady=15)
 
-        # Button hover effects
+        # Efectos de hover para cada botón
         for btn in [self.btn_jugar, self.btn_puntuaciones, self.btn_salir]:
             btn.bind('<Enter>', lambda e, b=btn: self.on_hover(e, b))
             btn.bind('<Leave>', lambda e, b=btn: self.on_leave(e, b))
 
     def on_hover(self, event, button):
         button.configure(bg='#FFF0F5')
+        
+        # Reproducir el sonido adecuado
+        if button == self.btn_salir:
+            ReproductorSonidos.reproducir_salir()
+        else:
+            ReproductorSonidos.reproducir_menu()
 
     def on_leave(self, event, button):
         colors = {'JUGAR': '#FFD1DC', 'PUNTUACIONES': '#C1E1C1', 'SALIR': '#FFB6B9'}
@@ -183,7 +191,7 @@ class MenuPrincipal:
 
         tk.Label(
             self.ventana_puntuaciones,
-            text="MEJORES PUNTUACIONES",
+            text="👑MEJORES PUNTUACIONES👑",
             font=("Comic Sans MS", 20, "bold"),
             fg='#FF6F61',
             bg='#FFEBE8'

@@ -2,7 +2,7 @@ import tkinter as tk
 import random
 import time
 import os
-from utils import GestorPuntuaciones
+from utils import GestorPuntuaciones, ReproductorSonidos
 from PIL import Image, ImageTk 
 
 class MemoriaJuego:
@@ -22,26 +22,27 @@ class MemoriaJuego:
         ruta_img = os.path.join(os.path.dirname(__file__), "img")
         
         # Cargar y redimensionar imágenes de frutas a tamaño fijo (64x64)
-        self.imagenes_frutas = [
-            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "cerezas.png")).resize((64, 64))),
-            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "fresa.png")).resize((64, 64))),
-            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "manzana.png")).resize((64, 64))),
-            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "naranja.png")).resize((64, 64))),
-            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "pera.png")).resize((64, 64))),
-            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "platano.png")).resize((64, 64))),
-            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "sandia.png")).resize((64, 64))),
-            ImageTk.PhotoImage(Image.open(os.path.join(ruta_img, "uvas.png")).resize((64, 64)))
-        ]
+        self.imagenes_frutas = []
+        nombres_imagenes = ["cerezas.png", "fresa.png", "manzana.png", "naranja.png", 
+                            "pera.png", "platano.png", "sandia.png", "uvas.png"]
+        
+        for nombre in nombres_imagenes:
+            ruta_imagen = os.path.join(ruta_img, nombre)
+            if os.path.isfile(ruta_imagen):
+                self.imagenes_frutas.append(ImageTk.PhotoImage(Image.open(ruta_imagen).resize((64, 64))))
+            else:
+                print(f"Error: la imagen {ruta_imagen} no se encuentra.")
+                return
         
         # Crear una imagen de fondo para los botones
         self.imagen_fondo = ImageTk.PhotoImage(Image.new("RGBA", (64, 64), (0, 0, 0, 0)))
         
         # Crear un frame para contener el tablero
-        self.frame_tablero = tk.Frame(self.root, bg='#E0BBE4')  # Cambiado a un color lavanda claro
+        self.frame_tablero = tk.Frame(self.root, bg='#E0BBE4')
         self.frame_tablero.pack(expand=True, fill='both', padx=10, pady=10)
         
         # Crear un frame separado para los botones de control
-        self.frame_controles = tk.Frame(self.root, bg='#EAB8E4')  # Cambiado a un color rosado suave
+        self.frame_controles = tk.Frame(self.root, bg='#EAB8E4')
         self.frame_controles.pack(fill='x', padx=10, pady=5)
         
         # Etiqueta para mostrar los intentos
@@ -88,11 +89,11 @@ class MemoriaJuego:
                 valor = valores.pop()
                 boton = tk.Button(
                     self.frame_tablero,
-                    image=self.imagen_fondo,  # Usar la imagen de fondo
-                    width=64,  # Tamaño fijo en píxeles
-                    height=64,  # Tamaño fijo en píxeles
+                    image=self.imagen_fondo,
+                    width=64,
+                    height=64,
                     command=lambda i=i, j=j: self.seleccionar_carta(i, j),
-                    bg='#FFC0CB'  # Color rosado para cartas no reveladas
+                    bg='#FFC0CB'
                 )
                 boton.valor = valor
                 boton.imagen = self.imagenes_frutas[valor]
@@ -142,11 +143,13 @@ class MemoriaJuego:
             carta1.config(state="disabled", bg='#A2E8AC')  # Color verde claro para cartas emparejadas
             carta2.config(state="disabled", bg='#A2E8AC')
             self.pares_encontrados += 1
+            ReproductorSonidos.reproducir_acierto()  # Reproducir sonido de acierto
         else:
             carta1.config(image=self.imagen_fondo)
             carta2.config(image=self.imagen_fondo)
             carta1.revelado = False
             carta2.revelado = False
+            ReproductorSonidos.reproducir_fallo()  # Reproducir sonido de fallo
 
         self.seleccionadas = []
         self.intentos += 1
@@ -166,7 +169,7 @@ class MemoriaJuego:
         ventana_resultado = tk.Toplevel(self.root)
         ventana_resultado.title("¡Juego Terminado!")
         ventana_resultado.geometry("300x200")
-        ventana_resultado.configure(bg='#FFD1DC')  # Color suave para el fondo de resultados
+        ventana_resultado.configure(bg='#FFD1DC')
         
         # Mensaje de resultado
         mensaje = f"¡Felicitaciones!\n\nIntentos: {self.intentos}\nTiempo: {tiempo_total//60}:{tiempo_total%60:02d}"
@@ -175,7 +178,7 @@ class MemoriaJuego:
             ventana_resultado,
             text=mensaje,
             font=("Helvetica", 14),
-            fg='black',  # Color de texto oscuro para contraste
+            fg='black',
             bg='#FFD1DC',
             justify=tk.CENTER
         ).pack(pady=20)
@@ -191,7 +194,7 @@ class MemoriaJuego:
         ).pack(pady=10)
 
     def volver_menu(self):
-        """Vuelve al menú principal y limpia la interfaz"""
+        """Vuelve al menú principal"""
         self.frame_tablero.destroy()
         self.frame_controles.destroy()
         self.cartas = []
