@@ -1,103 +1,104 @@
-# 🎮 Juego de Memoria
+# 🍎 Vista Previa 🍎
+
+![Juego de Memoria Demo](https://s11.gifyu.com/images/SGblI.gif)
+
+### 🎮 ¡Pon a prueba tu memoria en este emocionante juego! 🧠✨
+
+[![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
+[![Status](https://img.shields.io/badge/Status-Activo-success.svg)](https://github.com/Axeliox-Salvatore/pryecto_final)
 
 ## 📝 Descripción
-Este es un juego de memoria interactivo desarrollado en Python donde los jugadores deben encontrar pares de cartas coincidentes. El juego utiliza imágenes de frutas y ofrece una interfaz gráfica amigable con efectos de sonido para una experiencia más inmersiva.
+
+Este es un juego de memoria interactivo desarrollado en Python donde los jugadores deben encontrar pares de cartas coincidentes. El juego utiliza imágenes de frutas para un interesante desafío visual y ofrece una interfaz gráfica amigable con efectos de sonido para una experiencia más inmersiva.
 
 ## 🚀 Características
-- Interfaz gráfica intuitiva
-- Efectos de sonido para aciertos y fallos
-- Sistema de puntuación
-- Registro de mejores puntuaciones
-- Temporizador de juego
-- Contador de intentos
+
+| Característica | Descripción |
+|----------------|-------------|
+| 🎨 **Interfaz Gráfica Intuitiva** | Diseño amigable para jugar desde ordenador |
+| 🔊 **Efectos de Sonido** | Sonidos para aciertos y fallos que aumentan la inmersión |
+| 🏆 **Sistema de Puntuación** | Registra tus tiempos y intentos en cada partida |
+| 📊 **Registro de Mejores Puntuaciones** | Mantiene y muestra las mejores puntuaciones |
+| ⏱️ **Temporizador de Juego** | Controla el tiempo transcurrido en cada partida |
+| 🔢 **Contador de Intentos** | Monitorea el número de intentos realizados |
 
 ## 📁 Estructura del Proyecto
-```
+
+```plaintext
 juego-memoria/
+├── 📂 librerias/
+│   └── 📜 librerias.py     # Script para instalar dependencias
 │
-├── librerias/
-│   └── librerias.py     # Script para instalar dependencias
+├── 📂 img/                 # Imágenes de las cartas
+│   └── 🖼️ ...              # Archivos de imágenes
 │
-├── img/                 # Imágenes de las cartas
-│   └── ...              # Archivos de imágenes
-│
-├── sonidos/             # Efectos de sonido
-│   └── ...
+├── 📂 sonidos/             # Efectos de sonido
+│   └── 🔊 ...              # Archivos de audio
 │    
-├── puntuaciones.json    # Registro de puntuaciones
-└── main.py              # Archivo principal del juego
+├── 📊 puntuaciones.json    # Registro de puntuaciones
+└── 🎮 main.py              # Archivo principal del juego
 ```
 
 ## 📋 Requisitos Previos
-- Python 3.x
-- pip (gestor de paquetes de Python)
-- Git (para clonar el repositorio)
+
+| Requisito | Versión |
+|-----------|---------|
+| ![Python](https://img.shields.io/badge/Python-3.x-blue.svg) | 3.x o superior |
+| ![pip](https://img.shields.io/badge/pip-Latest-orange.svg) | Última versión |
+| ![Git](https://img.shields.io/badge/Git-Latest-f05032.svg) | Última versión |
 
 ## ⚙️ Instalación
 
-### Descargar el Proyecto
-1. Abre una terminal
-2. Clona el repositorio:
+### 1️⃣ Descargar el Proyecto
+
 ```bash
+# Clonar el repositorio
 git clone https://github.com/Axeliox-Salvatore/pryecto_final.git
-```
-3. Entra al directorio del proyecto:
-```bash
+
+# Entrar al directorio
 cd pryecto_final
 ```
 
-### Opción 1: Usando el Script de Instalación
-1. Abre una terminal
-2. Navega hasta la carpeta del proyecto
-3. Ejecuta:
-```bash
-python librerias/librerias.py
-```
+### 2️⃣ Instalar Dependencias
 
-### Opción 2: Instalación Manual
 ```bash
-pip install Pillow
-pip install pygame
+# Usando el script de instalación
+python librerias/librerias.py
 ```
 
 ## 🎮 Cómo Jugar
 
-1. **Iniciar el Juego**
-   ```bash
-   python main.py
-   ```
+### 🕹️ Controles Principales
 
-2. **Menú Principal**
-   - **JUGAR**: Inicia una nueva partida
-   - **PUNTUACIONES**: Muestra el historial de mejores puntuaciones
-   - **SALIR**: Cierra el juego
+| Acción | Descripción |
+|--------|-------------|
+| 🖱️ Clic | Revelar carta |
+| 🌓 Tema | Cambiar tema (☀️/🌙) |
 
-3. **Reglas del Juego**
-   - Haz clic en dos cartas para revelarlas
-   - Si las cartas coinciden, permanecerán visibles
-   - Si no coinciden, se volverán a ocultar
-   - El objetivo es encontrar todos los pares con el menor número de intentos
+### 📊 Niveles de Dificultad
 
-4. **Puntuación**
-   - Al completar el juego, podrás guardar tu puntuación
-   - Se registra el tiempo empleado y el número de intentos
+| Nivel | Tablero | Dificultad |
+|-------|----------|------------|
+| 1️⃣ | 4x4 | Principiante |
+| 2️⃣ | 6x6 | Intermedio |
+| 3️⃣ | 8x8 | Avanzado |
 
 ## ❗ Solución de Problemas
 
-### Problemas Comunes y Soluciones
+### 📷 Las imágenes no se cargan
+- ✅ Verifica que todas las imágenes estén en la carpeta `img/`
+- ✅ Comprueba que los nombres de los archivos coincidan
+- ✅ Asegúrate de que las imágenes sean archivos válidos
 
-1. **Las imágenes no se cargan**
-   - Verifica que todas las imágenes estén en la carpeta `img/`
-   - Comprueba que los nombres de los archivos coincidan con los esperados
-   - Asegúrate de que las imágenes sean archivos válidos
+### 🔊 Los sonidos no funcionan
+- ✅ Confirma que los archivos de sonido estén en `sonidos/`
+- ✅ Verifica que los archivos sean `.mp3` válidos
+- ✅ Comprueba que pygame esté instalado correctamente
 
-2. **Los sonidos no funcionan**
-   - Confirma que los archivos de sonido estén en la carpeta `sonidos/`
-   - Verifica que los archivos sean `.mp3` válidos
-   - Comprueba que pygame esté correctamente instalado
+### 💾 Error al guardar puntuaciones
+- ✅ Verifica los permisos de escritura
+- ✅ Comprueba que `puntuaciones.json` sea accesible
 
-3. **Error al guardar puntuaciones**
-   - Verifica los permisos de escritura en el directorio
-   - Comprueba que `puntuaciones.json` sea accesible
+## 🌟 ¡Diviértete jugando! 🌟
 
-### Integrantes:
+![Logo](https://avatars.githubusercontent.com/u/85382972?v=4)

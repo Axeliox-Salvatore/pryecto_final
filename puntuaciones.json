@@ -4,17 +4,5 @@
         "intentos": 8,
         "tiempo": 20,
         "fecha": "08/11/2024 10:15"
-    },
-    {
-        "nivel": 1,
-        "intentos": 9,
-        "tiempo": 25,
-        "fecha": "17/11/2024 21:21"
-    },
-    {
-        "nivel": 2,
-        "intentos": 53,
-        "tiempo": 162,
-        "fecha": "18/11/2024 01:07"
     }
 ]
