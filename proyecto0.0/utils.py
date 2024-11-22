@@ -83,20 +83,21 @@ class GestorPuntuaciones:
     def guardar_puntuaciones(self):
         """Guarda las puntuaciones en el archivo JSON."""
         with open(self.archivo, 'w') as f:
-            json.dump(self.puntuaciones, f)
+            json.dump(self.puntuaciones, f, indent=4)  # Añadido indent=4 para formato legible
 
-    def agregar_puntuacion(self, intentos, tiempo):
+    def agregar_puntuacion(self, nivel, intentos, tiempo):
         """Agrega una nueva puntuación y mantiene solo las mejores 10."""
         fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
         puntuacion = {
+            'nivel': nivel,
             'intentos': intentos,
             'tiempo': tiempo,
             'fecha': fecha
         }
         
         self.puntuaciones.append(puntuacion)
-        # Ordenar por intentos (menor es mejor) y luego por tiempo (menor es mejor)
-        self.puntuaciones.sort(key=lambda x: (x['intentos'], x['tiempo']))
+        # Ordenar primero por nivel, luego por intentos (menor es mejor) y luego por tiempo (menor es mejor)
+        self.puntuaciones.sort(key=lambda x: (x['nivel'], x['intentos'], x['tiempo']))
         # Mantener solo las mejores 10 puntuaciones
         self.puntuaciones = self.puntuaciones[:10]
         self.guardar_puntuaciones()

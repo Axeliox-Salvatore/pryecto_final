@@ -2,8 +2,8 @@ import subprocess
 import sys
 
 def instalar_librerias():
-    """Instala las librerías Pillow y Pygame usando pip."""
-    librerias = ['Pillow', 'pygame']
+    """Instala las librerías Pillow, Pygame, sv-ttk, tksvg y ttkbootstrap usando pip."""
+    librerias = ['Pillow', 'pygame', 'sv-ttk', 'tksvg', 'ttkbootstrap','ttkthemes']
     
     for libreria in librerias:
         try:

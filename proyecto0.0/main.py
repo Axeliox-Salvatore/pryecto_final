@@ -5,26 +5,33 @@ import tkinter as tk
 from menu import MenuPrincipal
 
 def main():
-    # Inicializar la música
+    # Inicializar la música y los sonidos
     ReproductorMusica.iniciar_musica()
     ReproductorSonidos.cargar_sonidos()
 
+    # Crear la ventana principal de Tkinter
     root = tk.Tk()
     root.title("Juego de Memoria")
 
-    # Configurar tamaño y posición de la ventana
-    window_width = 800
-    window_height = 600
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    center_x = int(screen_width/2 - window_width/2)
-    center_y = int(screen_height/2 - window_height/2)
+    # Configurar la ventana en pantalla completa
+    root.attributes('-fullscreen', True)
 
-    root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+    # Configurar el tamaño y la redimensionabilidad de la ventana
     root.resizable(False, False)
     root.configure(bg='#2C3E50')
 
-    MenuPrincipal(root)
+    # Definir los niveles del juego
+    #Agregar niveles
+    niveles = {
+        1: {'filas': 4, 'columnas': 4, 'cartas': 4},
+        2: {'filas': 6, 'columnas': 6, 'cartas': 9},
+        3: {'filas': 8, 'columnas': 8, 'cartas': 16}
+    }
+
+    # Crear el menú principal y pasar los niveles
+    menu = MenuPrincipal(root, niveles)
+
+    # Iniciar el bucle principal de la aplicación
     root.mainloop()
 
 if __name__ == "__main__":
